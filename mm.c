@@ -77,17 +77,17 @@ static char * rover;
 
 static void * find_fit(size_t asize){
 
-    char *oldrover = rover;
+    // char *oldrover = rover;
 
     /* Search from the rover to the end of list */
-    for ( ; GET_SIZE(HDRP(rover)) > 0; rover = NEXT_BLKP(rover))
-	if (!GET_ALLOC(HDRP(rover)) && (asize <= GET_SIZE(HDRP(rover))))
-	    return rover;
+    for (char* bp =rover ; GET_SIZE(HDRP(bp)) > 0; bp = NEXT_BLKP(bp))
+	if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp))))
+	    return rover = bp;
 
     /* search from start of list to old rover */
-    for (rover = heap_listp; rover < oldrover; rover = NEXT_BLKP(rover))
-	if (!GET_ALLOC(HDRP(rover)) && (asize <= GET_SIZE(HDRP(rover))))
-	    return rover;
+    for (char* bp = heap_listp; bp < rover; bp = NEXT_BLKP(bp))
+	if (!GET_ALLOC(HDRP(bp)) && (asize <= GET_SIZE(HDRP(bp))))
+	    return rover = bp;
 
     return NULL;
 }
@@ -138,10 +138,8 @@ static char*  coalesce(void *bp)
         bp = PREV_BLKP(bp);
     }
 
+    if ((rover > (char *)bp)&& (rover < NEXT_BLKP(bp))) rover = bp;
 
-    if ((rover > (char *)bp)) rover = bp;
-
-    // if ((rover > (char *)bp)&& (rover < NEXT_BLKP(bp))) rover = bp;
     return bp;
 
 }
@@ -206,7 +204,6 @@ void *mm_malloc(size_t size)
     /* Search the free list for a fit */
     if ((bp = find_fit(asize))!=NULL){
         place(bp,asize);
-        rover = bp;
         return bp;
     }
 
@@ -214,7 +211,6 @@ void *mm_malloc(size_t size)
     extendsize = MAX(asize,CHUNKSIZE);
     if ((bp = extend_heap(extendsize/WSIZE))==NULL) return NULL;
     place(bp,asize);
-    rover = bp;
     return bp;
 }
 
