@@ -75,8 +75,7 @@ team_t team = {
 #define PRED(bp)  ((char *)(bp))
 #define SUCC(bp)  ((char *)(bp) + WSIZE)
 
-void add_list(char *bp);
-void del_list(char *bp);
+
 static char* coalesce(void *bp);
 static void *extend_heap(size_t words);
 int mm_init(void);
@@ -85,6 +84,9 @@ static void place(void *bp, size_t asize);
 void *mm_malloc(size_t size);
 void mm_free(void *bp);
 void *mm_realloc(void *ptr, size_t size);
+void add_list(char *bp);
+void del_list(char *bp);
+static int find_index(size_t size);
 
 static char * heap_listp;
 static char * root;
@@ -284,6 +286,29 @@ void add_list(char *bp){
 void del_list(char *bp){ 
     PUT(SUCC(GET(PRED(bp))), GET(SUCC(bp)));
     PUT(PRED(GET(SUCC(bp))), GET(PRED(bp)));
+}
+
+static int find_index(size_t size) {
+    if (size > (1 << 14))
+        return 9;
+    if (size > (1 << 13))
+        return 8;
+    if (size > (1 << 12))
+        return 7;
+    if (size > (1 << 11))
+        return 6;
+    if (size > (1 << 10))
+        return 5;
+    if (size > (1 << 9))
+        return 4;
+    if (size > (1 << 8))
+        return 3;
+    if (size > (1 << 7))
+        return 2;
+    if (size > (1<<6))
+        return 1;
+   
+    return 0;
 }
 
 
