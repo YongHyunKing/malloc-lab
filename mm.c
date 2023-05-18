@@ -288,28 +288,4 @@ void del_list(char *bp){
     PUT(PRED(GET(SUCC(bp))), GET(PRED(bp)));
 }
 
-static int find_index(size_t size) {
-    if (size > (1 << 14))
-        return 9;
-    if (size > (1 << 13))
-        return 8;
-    if (size > (1 << 12))
-        return 7;
-    if (size > (1 << 11))
-        return 6;
-    if (size > (1 << 10))
-        return 5;
-    if (size > (1 << 9))
-        return 4;
-    if (size > (1 << 8))
-        return 3;
-    if (size > (1 << 7))
-        return 2;
-    if (size > (1<<6))
-        return 1;
-   
-    return 0;
-}
-
-
 
